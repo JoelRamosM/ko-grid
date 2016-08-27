@@ -1,0 +1,42 @@
+{
+  "name": "ko-grid",
+  "version": "1.0.0",
+  "description": "A simple grid with KnockoutJS and Bootstrap",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoelRamosM/ko-grid.git"
+  },
+  "keywords": [
+    "ko",
+    "ko-grid",
+    "knockout",
+    "datatable",
+    "grid"
+  ],
+  "author": "Joel Ramos Michaliszen <joel.r.mz@gmail.com> (https://github.com/JoelRamosM)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JoelRamosM/ko-grid/issues"
+  },
+  "homepage": "https://github.com/JoelRamosM/ko-grid#readme",
+  "devDependencies": {
+    "browserify": "^13.1.0",
+    "gulp": "^3.9.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^2.0.0",
+    "gulp-util": "^3.0.7",
+    "pump": "^1.0.1",
+    "stringfy": "0.0.12",
+    "stringify": "^5.1.0",
+    "vinyl-source-stream": "^1.1.0"
+  },
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "jquery": "^3.1.0",
+    "knockout": "^3.4.0"
+  }
+}

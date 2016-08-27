@@ -1,2 +1,2 @@
 # ko-grid
-A simple grid with KnockoutJS 
+A simple remote grid with KnockoutJS and Bootstrap
