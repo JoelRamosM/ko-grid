@@ -1,26 +1,26 @@
-﻿<div class="box">
-    <div class="box-body">
-        <div class="dataTables_wrapper form-inline dt-bootstrap">
+﻿<div class="box ko-grid_box">
+    <div class="box-body ko-grid_box-body">
+        <div class="dataTables_wrapper form-inline dt-bootstrap ko-grid_dataTables_wrapper">
             <div class="row">
                 <div class="col-sm-12">
-                    <table role="grid" class="table table-bordered table-hover dataTable">
-                        <thead>
-                            <tr>
+                    <table role="grid" class="table table-bordered table-hover dataTable ko-grid_table">
+                        <thead class="ko-grid_thead">
+                            <tr class="ko-grid_head-row">
                                 <!--ko if: isMultiSelect-->
-                                <td class="col-sm-1 text-center"><input type="checkbox" data-bind="checked: checkAll" /></td>
+                                <td class="col-sm-1 text-center ko-grid_th-check-all"><input type="checkbox" data-bind="checked: checkAll" /></td>
                                 <!--/ko-->
                                 <!--ko foreach: collumns-->
-                                <th data-bind="text:title"></th>
+                                <th class="ko-grid_th" data-bind="text:title"></th>
                                 <!--/ko-->
                             </tr>
                         </thead>
-                        <tbody data-bind="foreach: dataSource().dataSet">
-                            <tr role="row" class="odd" data-bind="doubleClick: $parent.defaultAction.bind($parent)" title="De dois cliques na linha para editar item.">
+                        <tbody class="ko-grid_tbody" data-bind="foreach: dataSource().dataSet">
+                            <tr role="row" class="odd ko-grid_row" data-bind="doubleClick: $parent.rowDoubleClickAction.bind($parent)" title="De dois cliques na linha para editar item.">
                                 <!--ko if: $parent.isMultiSelect-->
-                                <td class="col-sm-1 text-center"><input type="checkbox" data-bind="value:$data.id, checked:$parent.selectedRows" /></td>
+                                <td class="col-sm-1 text-center ko-grid_check-collumn"><input type="checkbox" data-bind="value:$data.id, checked:$parent.selectedRows" /></td>
                                 <!--/ko-->
                                 <!--ko foreach: $parent.collumns-->
-                                <td data-bind="text: $parent[$data.prop], formatter: $data.format"></td>
+                                <td class="ko-grid_collumn" data-bind="text: $parent[$data.prop], formatter: $data.format"></td>
                                 <!--/ko-->
                             </tr>
                         </tbody>
@@ -28,8 +28,8 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-5"><span data-bind="text: dataSourceDescription"></span></div>
-                <div class="col-sm-7"><page-control class="right" params="{totalPages: totalPages, currentPage: currentPage, onGoTo: goToPage.bind($data), onNext: next.bind($data), onPrev:prev.bind($data)}"></page-control></div>
+                <div class="col-sm-5 ko-grid_description"><span data-bind="text: dataSourceDescription"></span></div>
+                <div class="col-sm-7"><page-control class="right ko-grid_page-control" params="{totalPages: totalPages, currentPage: currentPage, onGoTo: goToPage.bind($data), onNext: next.bind($data), onPrev:prev.bind($data)}"></page-control></div>
             </div>
         </div>
     </div>

@@ -12,7 +12,7 @@ function GridViewModel(params) {
     }
     this.isMultiSelect = ko.observable(params.isMultiSelect || (params.isMultiSelect == undefined || params.isMultiSelect == null));
 
-    this.defaulActionCallback = params.defaultAction;
+    this.rowDoubleClickAction = params.rowDoubleClickAction||params.defaultAction;
 
     this.collumns = ko.observableArray(params.collumns);
 
