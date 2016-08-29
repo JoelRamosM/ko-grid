@@ -4,7 +4,7 @@ function GridViewModel(params) {
     params = params || {};
     var self = this;
     this.name = ko.observable(params.name);
-
+    this.identityProp = ko.observable(params.identityProp)
     this.onRefresh = new ko.subscribable();
 
     this.onRefreshCallback = function (data) {
@@ -55,7 +55,7 @@ function GridViewModel(params) {
 };
 
 GridViewModel.prototype.defaultAction = function (rowObject) {
-    this.defaulActionCallback && this.defaulActionCallback(rowObject["id"]);
+    this.defaulActionCallback && this.defaulActionCallback( rowObject[this.identityProp()] || rowObject["id"] || rowObject["Id"]);
 }
 
 GridViewModel.prototype.refresh = function () {
