@@ -17,7 +17,7 @@
                         <tbody class="ko-grid_tbody" data-bind="foreach: dataSource().dataSet">
                             <tr role="row" class="odd ko-grid_row" data-bind="doubleClick: $parent.rowDoubleClickAction.bind($parent)" title="De dois cliques na linha para editar item.">
                                 <!--ko if: $parent.isMultiSelect-->
-                                <td class="col-sm-1 text-center ko-grid_check-collumn"><input type="checkbox" data-bind="value:$data.id, checked:$parent.selectedRows" /></td>
+                                <td class="col-sm-1 text-center ko-grid_check-collumn"><input type="checkbox" data-bind="value:$data['id'] || $data['Id'] || $data[$parent.identityProp()], checked:$parent.selectedRows" /></td>
                                 <!--/ko-->
                                 <!--ko foreach: $parent.collumns-->
                                 <td class="ko-grid_collumn" data-bind="text: $parent[$data.prop], formatter: $data.format"></td>

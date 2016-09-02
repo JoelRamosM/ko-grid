@@ -40,7 +40,7 @@ function GridViewModel(params) {
             if (value) {
                 self.selectedRows.removeAll();
                 this.dataSource().dataSet().forEach(function (item) {
-                    self.selectedRows.push(item.id);
+                    self.selectedRows.push(item['id'] || item['Id']);
                 });
             } else {
                 this.selectedRows.removeAll();
