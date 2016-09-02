@@ -1,12 +1,92 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-ko.components.register("grid", {
+ko.components.register("crud-bar", {
     viewModel: require("./ViewModel.js"),
     template: require("./Template.html")
 });
 },{"./Template.html":2,"./ViewModel.js":3}],2:[function(require,module,exports){
-module.exports = "﻿<div class=\"box ko-grid_box\">\r\n    <div class=\"box-body ko-grid_box-body\">\r\n        <div class=\"dataTables_wrapper form-inline dt-bootstrap ko-grid_dataTables_wrapper\">\r\n            <div class=\"row\">\r\n                <div class=\"col-sm-12\">\r\n                    <table role=\"grid\" class=\"table table-bordered table-hover dataTable ko-grid_table\">\r\n                        <thead class=\"ko-grid_thead\">\r\n                            <tr class=\"ko-grid_head-row\">\r\n                                <!--ko if: isMultiSelect-->\r\n                                <td class=\"col-sm-1 text-center ko-grid_th-check-all\"><input type=\"checkbox\" data-bind=\"checked: checkAll\" /></td>\r\n                                <!--/ko-->\r\n                                <!--ko foreach: collumns-->\r\n                                <th class=\"ko-grid_th\" data-bind=\"text:title\"></th>\r\n                                <!--/ko-->\r\n                            </tr>\r\n                        </thead>\r\n                        <tbody class=\"ko-grid_tbody\" data-bind=\"foreach: dataSource().dataSet\">\r\n                            <tr role=\"row\" class=\"odd ko-grid_row\" data-bind=\"doubleClick: $parent.rowDoubleClickAction.bind($parent)\" title=\"De dois cliques na linha para editar item.\">\r\n                                <!--ko if: $parent.isMultiSelect-->\r\n                                <td class=\"col-sm-1 text-center ko-grid_check-collumn\"><input type=\"checkbox\" data-bind=\"value:$data.id, checked:$parent.selectedRows\" /></td>\r\n                                <!--/ko-->\r\n                                <!--ko foreach: $parent.collumns-->\r\n                                <td class=\"ko-grid_collumn\" data-bind=\"text: $parent[$data.prop], formatter: $data.format\"></td>\r\n                                <!--/ko-->\r\n                            </tr>\r\n                        </tbody>\r\n                    </table>\r\n                </div>\r\n            </div>\r\n            <div class=\"row\">\r\n                <div class=\"col-sm-5 ko-grid_description\"><span data-bind=\"text: dataSourceDescription\"></span></div>\r\n                <div class=\"col-sm-7\"><page-control class=\"right ko-grid_page-control\" params=\"{totalPages: totalPages, currentPage: currentPage, onGoTo: goToPage.bind($data), onNext: next.bind($data), onPrev:prev.bind($data)}\"></page-control></div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>";
+module.exports = "﻿<div classs=\"btn-group\">\r\n    <!--ko if: newActionVisible-->\r\n    <button class=\"btn btn-primary\" data-bind=\"click: $data.new, enable: newActionEnabled\">\r\n        <span class=\"fa fa-plus\" aria-hidden=\"true\"></span> Novo\r\n    </button>\r\n    <!--/ko-->\r\n    <!--ko if: editActionVisible-->\r\n    <button class=\"btn btn-primary\" data-bind=\"click: $data.edit, enable: editActionEnable\">\r\n        <span class=\"fa fa-edit\" aria-hidden=\"true\"></span> Editar\r\n    </button>\r\n    <!--/ko-->\r\n    <!--ko if: deleteActionVisible-->\r\n    <button class=\"btn btn-danger\" type=\"button\" data-bind=\"click: $data.delete, enable: deleteActionEnable\">\r\n        <span class=\"fa fa-remove\" aria-hidden=\"true\"></span> Excluir\r\n        <span class=\"badge\" data-bind=\"visible:selectedCountBadge, text: selectedCountBadge\"></span>\r\n    </button>\r\n    <!--/ko-->\r\n    <!--ko if: customActions().length-->\r\n    <!--ko foreach: customActions-->\r\n    <button class=\"btn\" type=\"button\" data-bind=\"click: $data.action, css:$data.btnClass\">\r\n        <span data-bind=\"css:$data.iconClass\" aria-hidden=\"true\"></span>\r\n        <span data-bind=\"text: text\"></span>\r\n    </button>\r\n    <!--/ko-->\r\n    <!--/ko-->\r\n</div>";
 
 },{}],3:[function(require,module,exports){
+var apiBuilder = require("../../models/api/ApiCrudBarBuilder");
+function CrudBarViewModel(params) {
+    this.onNew = new ko.subscribable();
+    this.onEdit = new ko.subscribable();
+    this.onDelete = new ko.subscribable();
+
+    this.selectedCountBadge = ko.observable(0);
+
+    this.newActionVisible = ko.observable(params.withNewAction || (params.withNewAction == undefined || params.withNewAction == null));
+    this.newActionEnabled = ko.observable(params.newActionEnable || (params.newActionEnable == undefined || params.newActionEnable == null));
+
+    this.editActionVisible = ko.observable(params.withEditAction || (params.withEditAction == undefined || params.withEditAction == null));
+    this.editActionEnable = ko.observable(params.editActionEnable || (params.editActionEnable == undefined || params.editActionEnable == null));;
+
+    this.deleteActionVisible = ko.observable(params.withDeleteAction || (params.withDeleteAction == undefined || params.withDeleteAction == null));
+    this.deleteActionEnable = ko.observable(params.deleteActionEnable || (params.deleteActionEnable == undefined || params.deleteActionEnable == null));
+
+    this.customActions = ko.observableArray(params.customActions);
+
+    this.onNew.subscribe(function () {
+        params.onNew && params.onNew();
+    }, this);
+
+    this.onEdit.subscribe(function () {
+        params.onEdit && params.onEdit();
+    }, this);
+
+    this.onDelete.subscribe(function () {
+        params.onDelete && params.onDelete();
+    }, this);
+
+    params.crudBarAPI && ko.isObservable(params.crudBarAPI) ? params.crudBarAPI(apiBuilder(this)) : params.crudBarAPI = apiBuilder(this);
+
+};
+
+CrudBarViewModel.prototype.setSelectedCount = function (count) {
+    this.selectedCountBadge(count);
+};
+
+CrudBarViewModel.prototype.new = function () {
+    this.onNew.notifySubscribers();
+};
+
+CrudBarViewModel.prototype.disableNew = function () {
+    this.newActionEnabled(false);
+};
+CrudBarViewModel.prototype.enableNew = function () {
+    this.newActionEnabled(true);
+};
+CrudBarViewModel.prototype.delete = function () {
+    this.onDelete.notifySubscribers();
+};
+CrudBarViewModel.prototype.disableDelete = function () {
+    this.deleteActionEnable(false);
+};
+CrudBarViewModel.prototype.enableDelete = function () {
+    this.deleteActionEnable(true);
+};
+
+CrudBarViewModel.prototype.edit = function () {
+    this.onEdit.notifySubscribers();
+};
+
+CrudBarViewModel.prototype.disableEdit = function () {
+    this.editActionEnable(false);
+};
+CrudBarViewModel.prototype.enableEdit = function () {
+    this.editActionEnable(true);
+};
+
+module.exports = CrudBarViewModel;
+},{"../../models/api/ApiCrudBarBuilder":14}],4:[function(require,module,exports){
+ko.components.register("grid", {
+    viewModel: require("./ViewModel.js"),
+    template: require("./Template.html")
+});
+},{"./Template.html":5,"./ViewModel.js":6}],5:[function(require,module,exports){
+module.exports = "﻿<div class=\"box ko-grid_box\">\r\n    <div class=\"box-body ko-grid_box-body\">\r\n        <div class=\"dataTables_wrapper form-inline dt-bootstrap ko-grid_dataTables_wrapper\">\r\n            <div class=\"row\">\r\n                <div class=\"col-sm-12\">\r\n                    <table role=\"grid\" class=\"table table-bordered table-hover dataTable ko-grid_table\">\r\n                        <thead class=\"ko-grid_thead\">\r\n                            <tr class=\"ko-grid_head-row\">\r\n                                <!--ko if: isMultiSelect-->\r\n                                <td class=\"col-sm-1 text-center ko-grid_th-check-all\"><input type=\"checkbox\" data-bind=\"checked: checkAll\" /></td>\r\n                                <!--/ko-->\r\n                                <!--ko foreach: collumns-->\r\n                                <th class=\"ko-grid_th\" data-bind=\"text:title\"></th>\r\n                                <!--/ko-->\r\n                            </tr>\r\n                        </thead>\r\n                        <tbody class=\"ko-grid_tbody\" data-bind=\"foreach: dataSource().dataSet\">\r\n                            <tr role=\"row\" class=\"odd ko-grid_row\" data-bind=\"doubleClick: $parent.rowDoubleClickAction.bind($parent)\" title=\"De dois cliques na linha para editar item.\">\r\n                                <!--ko if: $parent.isMultiSelect-->\r\n                                <td class=\"col-sm-1 text-center ko-grid_check-collumn\"><input type=\"checkbox\" data-bind=\"value:$data.id, checked:$parent.selectedRows\" /></td>\r\n                                <!--/ko-->\r\n                                <!--ko foreach: $parent.collumns-->\r\n                                <td class=\"ko-grid_collumn\" data-bind=\"text: $parent[$data.prop], formatter: $data.format\"></td>\r\n                                <!--/ko-->\r\n                            </tr>\r\n                        </tbody>\r\n                    </table>\r\n                </div>\r\n            </div>\r\n            <div class=\"row\">\r\n                <div class=\"col-sm-5 ko-grid_description\"><span data-bind=\"text: dataSourceDescription\"></span></div>\r\n                <div class=\"col-sm-7\"><page-control class=\"right ko-grid_page-control\" params=\"{totalPages: totalPages, currentPage: currentPage, onGoTo: goToPage.bind($data), onNext: next.bind($data), onPrev:prev.bind($data)}\"></page-control></div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>";
+
+},{}],6:[function(require,module,exports){
 var GridDataSource = require("../../models/gridDataSource");
 var apiBuilder = require("../../models/api/ApiGridBuilder");
 function GridViewModel(params) {
@@ -87,15 +167,15 @@ GridViewModel.prototype.prev = function () {
 };
 
 module.exports = GridViewModel;
-},{"../../models/api/ApiGridBuilder":11,"../../models/gridDataSource":12}],4:[function(require,module,exports){
+},{"../../models/api/ApiGridBuilder":15,"../../models/gridDataSource":16}],7:[function(require,module,exports){
 ko.components.register("page-control", {
     viewModel: require("./ViewModel.js"),
     template: require("./Template.html")
 });
-},{"./Template.html":5,"./ViewModel.js":6}],5:[function(require,module,exports){
+},{"./Template.html":8,"./ViewModel.js":9}],8:[function(require,module,exports){
 module.exports = "﻿<div class=\"dataTables_paginate paging_simple_numbers\" data-bind=\"visible: totalPages()>1\">\r\n    <ul class=\"pagination\">\r\n        <li data-bind=\"css:{'disabled':!prevPageEnable()}\"><a aria-label=\"Previous\" data-bind=\"click:prev\"><span aria-hidden=\"true\">&laquo;</span></a></li>\r\n        <!--<li data-bind=\"css:{'disabled':!nextPageEnable()},visible: ellipisisPrev\"><span>...</span></li>-->\r\n        <!--ko foreach: pages-->\r\n        <li data-bind=\"css:{'active': $data.current}\"><a data-bind=\"text:$data.value, click: $parent.goTo.bind($parent,$data.value)\"> <span class=\"sr-only\"></span></a></li>\r\n        <!--/ko-->\r\n        <li data-bind=\"css:{'disabled':!nextPageEnable()},visible: ellipisisNext\"><span>...</span></li>\r\n        <li data-bind=\"css:{'disabled':!nextPageEnable()}\"><a aria-label=\"Next\" data-bind=\"click:next\"><span aria-hidden=\"true\">&raquo;</span></a></li>\r\n    </ul>\r\n</div>";
 
-},{}],6:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 function PageControlViewModel(params) {
     this.totalPages = ko.isObservable(params.totalPages) ? params.totalPages : ko.observable(params.totalPages);
     this.currentPage = ko.isObservable(params.currentPage) ? params.currentPage : ko.observable(params.currentPage);
@@ -178,11 +258,12 @@ PageControlViewModel.prototype.goTo = function (page) {
 };
 
 module.exports = PageControlViewModel;
-},{}],7:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 require("./page-control/Register");
 require("./grid/Register");
+require("./crud-bar/Register");
 ko.applyBindings({});
-},{"./grid/Register":1,"./page-control/Register":4}],8:[function(require,module,exports){
+},{"./crud-bar/Register":1,"./grid/Register":4,"./page-control/Register":7}],11:[function(require,module,exports){
 ko.bindingHandlers["doubleClick"] = {
     init: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
         var handler = valueAccessor.bind(bindingContext)();
@@ -191,7 +272,7 @@ ko.bindingHandlers["doubleClick"] = {
         });
     }
 };
-},{}],9:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 ko.bindingHandlers["formatter"] = {
     init: function () {
 
@@ -230,7 +311,7 @@ ko.bindingHandlers["formatter"] = {
     }
 
 };
-},{}],10:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 function request(method, url, params, done, fail, aways) {
     var xhr = $.ajax({ method: method, url: url, data: params })
                   .done(done)
@@ -248,7 +329,21 @@ module.exports = {
     }
 
 };
-},{}],11:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
+function ApiCrudBarBuilder(gridScope) {
+    return {
+        disableNewAction: gridScope.disableNew.bind(gridScope),
+        enableNewAction: gridScope.enableNew.bind(gridScope),
+        disableDeleteAction: gridScope.disableDelete.bind(gridScope),
+        enableDeleteAction: gridScope.enableDelete.bind(gridScope),
+        disableEditAction: gridScope.disableEdit.bind(gridScope),
+        enableEditAction: gridScope.enableEdit.bind(gridScope),
+        setSelectedBadge: gridScope.setSelectedCount.bind(gridScope)
+    };
+};
+
+module.exports = ApiCrudBarBuilder;
+},{}],15:[function(require,module,exports){
 function ApiGridBuilder(gridScope) {
     return {
         applyFilter: gridScope.filter.bind(gridScope),
@@ -260,7 +355,7 @@ function ApiGridBuilder(gridScope) {
 };
 
 module.exports = ApiGridBuilder;
-},{}],12:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 var GridRequest = require("./gridRequest");
 var ajaxRequest = require("./ajax-request");
 function GridDataSource(data) {
@@ -322,7 +417,7 @@ GridDataSource.prototype.refresh = function (filter) {
 module.exports = GridDataSource;
 
 
-},{"./ajax-request":10,"./gridRequest":13}],13:[function(require,module,exports){
+},{"./ajax-request":13,"./gridRequest":17}],17:[function(require,module,exports){
 function GridRequest(data) {
     data = data || {};
     this.pageLength = ko.observable(data.pageLength || data.PageLength || 10);
@@ -333,8 +428,8 @@ function GridRequest(data) {
     this.data = ko.observableArray(data.data || data.Data || []);
 }
 module.exports = GridRequest;
-},{}],14:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 require("./extensions/doubleClickBindHandler.js");
 require("./extensions/formatterBindHandler.js");
 require("./components/register-all.js");
-},{"./components/register-all.js":7,"./extensions/doubleClickBindHandler.js":8,"./extensions/formatterBindHandler.js":9}]},{},[14]);
+},{"./components/register-all.js":10,"./extensions/doubleClickBindHandler.js":11,"./extensions/formatterBindHandler.js":12}]},{},[18]);

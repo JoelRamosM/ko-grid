@@ -1,0 +1,26 @@
+﻿<div classs="btn-group">
+    <!--ko if: newActionVisible-->
+    <button class="btn btn-primary" data-bind="click: $data.new, enable: newActionEnabled">
+        <span class="fa fa-plus" aria-hidden="true"></span> Novo
+    </button>
+    <!--/ko-->
+    <!--ko if: editActionVisible-->
+    <button class="btn btn-primary" data-bind="click: $data.edit, enable: editActionEnable">
+        <span class="fa fa-edit" aria-hidden="true"></span> Editar
+    </button>
+    <!--/ko-->
+    <!--ko if: deleteActionVisible-->
+    <button class="btn btn-danger" type="button" data-bind="click: $data.delete, enable: deleteActionEnable">
+        <span class="fa fa-remove" aria-hidden="true"></span> Excluir
+        <span class="badge" data-bind="visible:selectedCountBadge, text: selectedCountBadge"></span>
+    </button>
+    <!--/ko-->
+    <!--ko if: customActions().length-->
+    <!--ko foreach: customActions-->
+    <button class="btn" type="button" data-bind="click: $data.action, css:$data.btnClass">
+        <span data-bind="css:$data.iconClass" aria-hidden="true"></span>
+        <span data-bind="text: text"></span>
+    </button>
+    <!--/ko-->
+    <!--/ko-->
+</div>
