@@ -54,6 +54,13 @@ function GridViewModel(params) {
     this.dataSource().refresh();
 };
 
+GridViewModel.prototype._getDataValue = function(data,prop){
+    var splited = prop.split('.');
+    var value=data[splited[0]];  
+    if(splited.length>1)
+        return this._getDataValue(value,splited.slice(1).join('.'))
+    return value;
+};
 GridViewModel.prototype.defaultAction = function (rowObject) {
     this.defaulActionCallback && this.defaulActionCallback( rowObject[this.identityProp()] || rowObject["id"] || rowObject["Id"]);
 }
