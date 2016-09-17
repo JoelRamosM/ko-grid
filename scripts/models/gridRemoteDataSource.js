@@ -1,4 +1,5 @@
 ﻿var GridDataSourceBase = require("./gridDataSource.base");
+var GridRequest = require("./gridRequest");
 var ajaxRequest = require("./ajax-request");
 function GridRemoteDataSource(data) {
     data = data || {};

@@ -16,9 +16,9 @@ function GridViewModel(params) {
     this.onRefreshCallback = function (data) {
         this.onRefresh.notifySubscribers(data);
     }
-    this.isMultiSelect = ko.observable(params.isMultiSelect || (params.isMultiSelect == undefined || params.isMultiSelect == null));
+    this.isMultiSelect = ko.observable(params.isMultiSelect);
 
-    this.rowDoubleClickAction = params.rowDoubleClickAction||params.defaultAction;
+    this.rowDoubleClickAction = params.rowDoubleClickAction || params.defaultAction ||function(){};
 
     this.collumns = ko.observableArray(params.collumns);
 

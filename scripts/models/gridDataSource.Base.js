@@ -16,20 +16,20 @@ function GridDataSourceBase(data) {
     this.onRefresh.subscribe(function () {
         data.onRefresh(this.gridRequest().data());
     }, this);
-};
 
-GridDataSourceBase.prototype.next = function () {
-    this.gridRequest().currentPage(this.gridRequest().currentPage() + 1);
-    this.refresh();
-};
-GridDataSourceBase.prototype.prev = function () {
-    this.gridRequest().currentPage(this.gridRequest().currentPage() - 1);
-    this.refresh();
-};
+    this.next = function () {
+        this.gridRequest().currentPage(this.gridRequest().currentPage() + 1);
+        this.refresh();
+    };
+    this.prev = function () {
+        this.gridRequest().currentPage(this.gridRequest().currentPage() - 1);
+        this.refresh();
+    };
 
-GridDataSourceBase.prototype.goto = function (page) {
-    this.gridRequest().currentPage(page);
-    this.refresh();
+    this.goto = function (page) {
+        this.gridRequest().currentPage(page);
+        this.refresh();
+    };
 };
 
 module.exports = GridDataSourceBase;

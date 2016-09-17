@@ -87,8 +87,14 @@ ko.components.register("grid", {
 module.exports = "﻿<div class=\"box ko-grid_box\">\r\n    <div class=\"box-body ko-grid_box-body\">\r\n        <div class=\"dataTables_wrapper form-inline dt-bootstrap ko-grid_dataTables_wrapper\">\r\n            <div class=\"row\">\r\n                <div class=\"col-sm-12\">\r\n                    <table role=\"grid\" class=\"table table-bordered table-hover dataTable ko-grid_table\">\r\n                        <thead class=\"ko-grid_thead\">\r\n                            <tr class=\"ko-grid_head-row\">\r\n                                <!--ko if: isMultiSelect-->\r\n                                <td class=\"col-sm-1 text-center ko-grid_th-check-all\"><input type=\"checkbox\" data-bind=\"checked: checkAll\" /></td>\r\n                                <!--/ko-->\r\n                                <!--ko foreach: collumns-->\r\n                                <th class=\"ko-grid_th\" data-bind=\"text:title\"></th>\r\n                                <!--/ko-->\r\n                            </tr>\r\n                        </thead>\r\n                        <tbody class=\"ko-grid_tbody\" data-bind=\"foreach: dataSource().dataSet\">\r\n                            <tr role=\"row\" class=\"odd ko-grid_row\" data-bind=\"doubleClick: $parent.rowDoubleClickAction.bind($parent)\" title=\"De dois cliques na linha para editar item.\">\r\n                                <!--ko if: $parent.isMultiSelect-->\r\n                                <td class=\"col-sm-1 text-center ko-grid_check-collumn\"><input type=\"checkbox\" data-bind=\"value:$data['id'] || $data['Id'] || $data[$parent.identityProp()], checked:$parent.selectedRows\" /></td>\r\n                                <!--/ko-->\r\n                                <!--ko foreach: $parent.collumns-->\r\n                                <td class=\"ko-grid_collumn\" data-bind=\"text: $parents[1]._getDataValue($parent,$data.prop), formatter: $data.format\"></td>\r\n                                <!--/ko-->\r\n                            </tr>\r\n                        </tbody>\r\n                    </table>\r\n                </div>\r\n            </div>\r\n            <div class=\"row\">\r\n                <div class=\"col-sm-5 ko-grid_description\"><span data-bind=\"text: dataSourceDescription\"></span></div>\r\n                <div class=\"col-sm-7\"><page-control class=\"right ko-grid_page-control\" params=\"{totalPages: totalPages, currentPage: currentPage, onGoTo: goToPage.bind($data), onNext: next.bind($data), onPrev:prev.bind($data)}\"></page-control></div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>";
 
 },{}],6:[function(require,module,exports){
-var GridDataSource = require("../../models/gridDataSource");
+var GridRemoteDataSource = require("../../models/gridRemoteDataSource");
+var GridLocalDataSource = require("../../models/gridLocalDataSource");
 var apiBuilder = require("../../models/api/ApiGridBuilder");
+
+function gridDataSourceFac(data){    
+        return data.url?new GridRemoteDataSource(data): new GridLocalDataSource(data);
+}
+
 function GridViewModel(params) {
     params = params || {};
     var self = this;
@@ -99,13 +105,14 @@ function GridViewModel(params) {
     this.onRefreshCallback = function (data) {
         this.onRefresh.notifySubscribers(data);
     }
-    this.isMultiSelect = ko.observable(params.isMultiSelect || (params.isMultiSelect == undefined || params.isMultiSelect == null));
+    this.isMultiSelect = ko.observable(params.isMultiSelect);
 
-    this.rowDoubleClickAction = params.rowDoubleClickAction||params.defaultAction;
+    this.rowDoubleClickAction = params.rowDoubleClickAction || params.defaultAction ||function(){};
 
     this.collumns = ko.observableArray(params.collumns);
 
-    this.dataSource = ko.observable(new GridDataSource({ url: params.url, defaultAction: params.defaulAction, onRefresh: this.onRefreshCallback.bind(this) }));
+
+    this.dataSource = ko.observable(gridDataSourceFac({ url: params.url, dataSet:params.data, defaultAction: params.defaulAction, onRefresh: this.onRefreshCallback.bind(this) }));
 
     this.selectedRows = ko.observableArray([]);
     //TODO: selected rows on current page
@@ -174,7 +181,7 @@ GridViewModel.prototype.prev = function () {
 };
 
 module.exports = GridViewModel;
-},{"../../models/api/ApiGridBuilder":15,"../../models/gridDataSource":16}],7:[function(require,module,exports){
+},{"../../models/api/ApiGridBuilder":15,"../../models/gridLocalDataSource":17,"../../models/gridRemoteDataSource":18}],7:[function(require,module,exports){
 ko.components.register("page-control", {
     viewModel: require("./ViewModel.js"),
     template: require("./Template.html")
@@ -269,7 +276,7 @@ module.exports = PageControlViewModel;
 require("./page-control/Register");
 require("./grid/Register");
 require("./crud-bar/Register");
-ko.applyBindings({});
+//ko.applyBindings({});
 },{"./crud-bar/Register":1,"./grid/Register":4,"./page-control/Register":7}],11:[function(require,module,exports){
 ko.bindingHandlers["doubleClick"] = {
     init: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
@@ -364,15 +371,9 @@ function ApiGridBuilder(gridScope) {
 module.exports = ApiGridBuilder;
 },{}],16:[function(require,module,exports){
 var GridRequest = require("./gridRequest");
-var ajaxRequest = require("./ajax-request");
-function GridDataSource(data) {
+function GridDataSourceBase(data) {
     data = data || {};
     var self = this;
-
-    this.url = ko.isObservable(data.url) ? data.url : ko.observable(data.url || "");
-    this.urlNotInformed = ko.computed(function () {
-        return !this.url();
-    }, this);
 
     this.gridRequest = ko.observable(new GridRequest());
 
@@ -387,23 +388,67 @@ function GridDataSource(data) {
     this.onRefresh.subscribe(function () {
         data.onRefresh(this.gridRequest().data());
     }, this);
+
+    this.next = function () {
+        this.gridRequest().currentPage(this.gridRequest().currentPage() + 1);
+        this.refresh();
+    };
+    this.prev = function () {
+        this.gridRequest().currentPage(this.gridRequest().currentPage() - 1);
+        this.refresh();
+    };
+
+    this.goto = function (page) {
+        this.gridRequest().currentPage(page);
+        this.refresh();
+    };
 };
 
-GridDataSource.prototype.next = function () {
-    this.gridRequest().currentPage(this.gridRequest().currentPage() + 1);
-    this.refresh();
-};
-GridDataSource.prototype.prev = function () {
-    this.gridRequest().currentPage(this.gridRequest().currentPage() - 1);
-    this.refresh();
+module.exports = GridDataSourceBase;
+
+
+},{"./gridRequest":19}],17:[function(require,module,exports){
+var GridDataSourceBase = require("./gridDataSource.base");
+function GridLocalDataSource(data) {
+    data = data || {};
+    GridDataSourceBase.bind(this,data).call();
+    var self = this;
+    this.filterableFields = ko.isObservable(data.filterableFields) ? data.filterableFields : ko.observableArray(data.filterableFields || []);    
+    this.localData = ko.isObservable(data.dataSet) ? data.dataSet : ko.observableArray(data.dataSet || []);
+    this.localData.subscribe(function(value){
+        this.refresh();
+    },this);            
 };
 
-GridDataSource.prototype.goto = function (page) {
-    this.gridRequest().currentPage(page);
-    this.refresh();
+function _getFirstIndex(gridRequest){
+        return (gridRequest().currentPage()-1) * gridRequest().pageLength();
+}
+
+GridLocalDataSource.prototype.refresh = function (filter) {   
+    var firstIndex = _getFirstIndex(this.gridRequest)
+     var pagedData = this.localData().slice(firstIndex,(this.gridRequest().currentPage()* this.gridRequest().pageLength()));
+     
+     this.gridRequest().totalPages(Math.floor((this.localData().length+this.gridRequest().pageLength()-1)/this.gridRequest().pageLength()));
+     this.gridRequest().totalData(this.localData().length);
+     this.gridRequest().data(pagedData);    
+     this.onRefresh.notifySubscribers();
+};
+module.exports = GridLocalDataSource;
+},{"./gridDataSource.base":16}],18:[function(require,module,exports){
+var GridDataSourceBase = require("./gridDataSource.base");
+var GridRequest = require("./gridRequest");
+var ajaxRequest = require("./ajax-request");
+function GridRemoteDataSource(data) {
+    data = data || {};
+    GridDataSourceBase.bind(this,data).call();
+    var self = this;    
+    this.url = ko.isObservable(data.url) ? data.url : ko.observable(data.url || "");
+    this.urlNotInformed = ko.computed(function () {
+        return !this.url();
+    }, this);   
 };
 
-GridDataSource.prototype.refresh = function (filter) {
+GridRemoteDataSource.prototype.refresh = function (filter) {
     var self = this;
     filter = filter || {};
     var gridRequest = ko.toJS(this.gridRequest());
@@ -421,10 +466,10 @@ GridDataSource.prototype.refresh = function (filter) {
             self.onRefresh.notifySubscribers();
         });
 };
-module.exports = GridDataSource;
+module.exports = GridRemoteDataSource;
 
 
-},{"./ajax-request":13,"./gridRequest":17}],17:[function(require,module,exports){
+},{"./ajax-request":13,"./gridDataSource.base":16,"./gridRequest":19}],19:[function(require,module,exports){
 function GridRequest(data) {
     data = data || {};
     this.pageLength = ko.observable(data.pageLength || data.PageLength || 10);
@@ -435,8 +480,8 @@ function GridRequest(data) {
     this.data = ko.observableArray(data.data || data.Data || []);
 }
 module.exports = GridRequest;
-},{}],18:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 require("./extensions/doubleClickBindHandler.js");
 require("./extensions/formatterBindHandler.js");
 require("./components/register-all.js");
-},{"./components/register-all.js":10,"./extensions/doubleClickBindHandler.js":11,"./extensions/formatterBindHandler.js":12}]},{},[18]);
+},{"./components/register-all.js":10,"./extensions/doubleClickBindHandler.js":11,"./extensions/formatterBindHandler.js":12}]},{},[20]);
