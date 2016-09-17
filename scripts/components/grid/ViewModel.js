@@ -1,5 +1,11 @@
-﻿var GridDataSource = require("../../models/gridDataSource");
+﻿var GridRemoteDataSource = require("../../models/gridRemoteDataSource");
+var GridLocalDataSource = require("../../models/gridLocalDataSource");
 var apiBuilder = require("../../models/api/ApiGridBuilder");
+
+function gridDataSourceFac(data){    
+        return data.url?new GridRemoteDataSource(data): new GridLocalDataSource(data);
+}
+
 function GridViewModel(params) {
     params = params || {};
     var self = this;
@@ -16,7 +22,8 @@ function GridViewModel(params) {
 
     this.collumns = ko.observableArray(params.collumns);
 
-    this.dataSource = ko.observable(new GridDataSource({ url: params.url, defaultAction: params.defaulAction, onRefresh: this.onRefreshCallback.bind(this) }));
+
+    this.dataSource = ko.observable(gridDataSourceFac({ url: params.url, dataSet:params.data, defaultAction: params.defaulAction, onRefresh: this.onRefreshCallback.bind(this) }));
 
     this.selectedRows = ko.observableArray([]);
     //TODO: selected rows on current page
