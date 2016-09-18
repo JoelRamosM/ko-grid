@@ -3,9 +3,19 @@
         <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
     </head>
     <body>
-        <grid></grid>
+        <grid params="{data:data, collumns: collumns}"></grid>
     </body>
     <script type="text/javascript" src="./node_modules/jquery/dist/jquery.min.js"></script>
     <script type="text/javascript" src="./node_modules/knockout/build/output/knockout-latest.js"></script>    
     <script type="text/javascript" src="./dist/ko-grid.min.js"></script>
+    <script type="text/javascript">
+        (function(){
+            var vm = function(){
+                this.data = ko.observableArray([{teste:1, testeUm: 'Testeando 1'},{teste:2, testeUm: 'Testeando 2'}]);
+                this.collumns= [{prop:'teste',title:'Teste 1'},{prop:'testeUm', title:'Teste 2'}];
+            }
+            window.testeVM = new vm();
+            ko.applyBindings(testeVM,$('body')[0]);
+        })();
+    </script>
 </html>

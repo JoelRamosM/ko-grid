@@ -20,7 +20,7 @@
                                 <td class="col-sm-1 text-center ko-grid_check-collumn"><input type="checkbox" data-bind="value:$data['id'] || $data['Id'] || $data[$parent.identityProp()], checked:$parent.selectedRows" /></td>
                                 <!--/ko-->
                                 <!--ko foreach: $parent.collumns-->
-                                <td class="ko-grid_collumn" data-bind="text: $parent[$data.prop], formatter: $data.format"></td>
+                                <td class="ko-grid_collumn" data-bind="text: $parents[1]._getDataValue($parent,$data.prop), formatter: $data.format"></td>
                                 <!--/ko-->
                             </tr>
                         </tbody>

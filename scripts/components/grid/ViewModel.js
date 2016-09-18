@@ -1,5 +1,11 @@
-﻿var GridDataSource = require("../../models/gridDataSource");
+var GridRemoteDataSource = require("../../models/gridRemoteDataSource");
+var GridLocalDataSource = require("../../models/gridLocalDataSource");
 var apiBuilder = require("../../models/api/ApiGridBuilder");
+
+function gridDataSourceFac(data) {
+    return data.url ? new GridRemoteDataSource(data) : new GridLocalDataSource(data);
+}
+
 function GridViewModel(params) {
     params = params || {};
     var self = this;
@@ -10,13 +16,14 @@ function GridViewModel(params) {
     this.onRefreshCallback = function (data) {
         this.onRefresh.notifySubscribers(data);
     }
-    this.isMultiSelect = ko.observable(params.isMultiSelect || (params.isMultiSelect == undefined || params.isMultiSelect == null));
+    this.isMultiSelect = ko.observable(params.isMultiSelect);
 
-    this.rowDoubleClickAction = params.rowDoubleClickAction||params.defaultAction;
+    this.rowDoubleClickAction = params.rowDoubleClickAction || params.defaultAction || function () { };
 
     this.collumns = ko.observableArray(params.collumns);
 
-    this.dataSource = ko.observable(new GridDataSource({ url: params.url, defaultAction: params.defaulAction, onRefresh: this.onRefreshCallback.bind(this) }));
+
+    this.dataSource = ko.observable(gridDataSourceFac({ url: params.url, dataSet: params.data, defaultAction: params.defaulAction, onRefresh: this.onRefreshCallback.bind(this) }));
 
     this.selectedRows = ko.observableArray([]);
     //TODO: selected rows on current page
@@ -29,7 +36,9 @@ function GridViewModel(params) {
     }, this);
 
     this.dataSourceDescription = ko.computed(function () {
-        return "Mostrando " + this.dataSource().dataSet().length + " de " + this.dataSource().gridRequest().totalData() + ".";
+        var firstIndexInPage = (this.dataSource().gridRequest().currentPage() - 1) * this.dataSource().gridRequest().pageLength()+1;
+        var lastIndexInPage = (firstIndexInPage + this.dataSource().gridRequest().data().length-1);
+        return "Mostrando de " + firstIndexInPage + " para " + lastIndexInPage + ". Total: " + this.dataSource().gridRequest().totalData() + " itens";        
     }, this);
 
     this.checkAll = ko.computed({
@@ -54,8 +63,15 @@ function GridViewModel(params) {
     this.dataSource().refresh();
 };
 
+GridViewModel.prototype._getDataValue = function (data, prop) {
+    var splited = prop.split('.');
+    var value = data[splited[0]];
+    if (splited.length > 1)
+        return this._getDataValue(value, splited.slice(1).join('.'))
+    return value;
+};
 GridViewModel.prototype.defaultAction = function (rowObject) {
-    this.defaulActionCallback && this.defaulActionCallback( rowObject[this.identityProp()] || rowObject["id"] || rowObject["Id"]);
+    this.defaulActionCallback && this.defaulActionCallback(rowObject[this.identityProp()] || rowObject["id"] || rowObject["Id"]);
 }
 
 GridViewModel.prototype.refresh = function () {
