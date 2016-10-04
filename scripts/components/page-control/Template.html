@@ -1,11 +1,13 @@
-﻿<div class="dataTables_paginate paging_simple_numbers" data-bind="visible: totalPages()>1">
-    <ul class="pagination">
-        <li data-bind="css:{'disabled':!prevPageEnable()}"><a aria-label="Previous" data-bind="click:prev"><span aria-hidden="true">&laquo;</span></a></li>
-        <!--<li data-bind="css:{'disabled':!nextPageEnable()},visible: ellipisisPrev"><span>...</span></li>-->
+﻿<nav aria-label="Page navigation" data-bind="visible: totalPages()>1">
+    <ul class="pagination pagination-sm" style="margin-top:0;">
+        <li data-bind="css:{'disabled':!prevPageEnable()}" style="cursor:pointer;"><a  data-bind="click:first"><span class="ko-grid__pagination_first-icon">|<</span></a></li>
+        <li data-bind="css:{'disabled':!prevPageEnable()}" style="cursor:pointer;"><a aria-label="Previous" data-bind="click:prev"><span  class="ko-grid__pagination_prev-icon" aria-hidden="true"><<</span></a></li>
+        <!--<li data-bind="css:{'disabled':!prevPageEnable()},visible: ellipisisPrev"><span>...</span></li>-->
         <!--ko foreach: pages-->
-        <li data-bind="css:{'active': $data.current}"><a data-bind="text:$data.value, click: $parent.goTo.bind($parent,$data.value)"> <span class="sr-only"></span></a></li>
+        <li data-bind="css:{'active': $data.current}" style="cursor:pointer;"><a data-bind="text:$data.value, click: $parent.goTo.bind($parent,$data.value)"> <span class="sr-only"></span></a></li>
         <!--/ko-->
-        <li data-bind="css:{'disabled':!nextPageEnable()},visible: ellipisisNext"><span>...</span></li>
-        <li data-bind="css:{'disabled':!nextPageEnable()}"><a aria-label="Next" data-bind="click:next"><span aria-hidden="true">&raquo;</span></a></li>
+        <!--<li data-bind="css:{'disabled':!nextPageEnable()},visible: ellipisisNext"><span>...</span></li>-->
+        <li data-bind="css:{'disabled':!nextPageEnable()}" style="cursor:pointer;"><a  data-bind="click:next"><span class="ko-grid__pagination_next-icon">>></span></a></li>
+        <li data-bind="css:{'disabled':!nextPageEnable()}" style="cursor:pointer;"><a  data-bind="click:last"><span class="ko-grid__pagination_last-icon" >>|</span></a></li>
     </ul>
-</div>
+</nav>
