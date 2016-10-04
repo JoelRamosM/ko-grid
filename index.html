@@ -1,21 +1,60 @@
 <html>
-    <head>
-        <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
-    </head>
-    <body>
-        <grid params="{data:data, collumns: collumns}"></grid>
-    </body>
-    <script type="text/javascript" src="./node_modules/jquery/dist/jquery.min.js"></script>
-    <script type="text/javascript" src="./node_modules/knockout/build/output/knockout-latest.js"></script>    
-    <script type="text/javascript" src="./dist/ko-grid.min.js"></script>
-    <script type="text/javascript">
+
+<head>
+    <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
+</head>
+
+<body  class="container">    
+    <div class="row">
+        <div class="col-xl-5">
+            <grid params="config: gridConfig"></grid>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="./node_modules/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript" src="./node_modules/knockout/build/output/knockout-latest.js"></script>
+<script type="text/javascript" src="./dist/ko-grid.min.js"></script>
+<script type="text/javascript">
         (function(){
             var vm = function(){
-                this.data = ko.observableArray([{teste:1, testeUm: 'Testeando 1'},{teste:2, testeUm: 'Testeando 2'}]);
-                this.collumns= [{prop:'teste',title:'Teste 1'},{prop:'testeUm', title:'Teste 2'}];
+                this.data = ko.observableArray([
+                    {teste:1, testeUm: 'Testeando 1'},
+                    {teste:2, testeUm: 'Testeando 2'},
+                    {teste:2, testeUm: 'Testeando 2'},
+                    {teste:2, testeUm: 'Testeando 2'},
+                    {teste:2, testeUm: 'Testeando 2'},
+                    {teste:2, testeUm: 'Testeando 2'},
+                    {teste:2, testeUm: 'Testeando 2'},
+                    {teste:2, testeUm: 'Testeando 2'},
+                    {teste:2, testeUm: 'Testeando 2'},
+                    {teste:2, testeUm: 'Testeando 2'},
+                    {teste:2, testeUm: 'Testeando 2'},
+                    {teste:2, testeUm: 'Testeando 2'},
+                    {teste:2, testeUm: 'Testeando 2'},
+                    {teste:2, testeUm: 'Testeando 2'},
+                    {teste:2, testeUm: 'Testeando 2'},
+                    {teste:2, testeUm: 'Testeando 2'},
+                    {teste:2, testeUm: 'Testeando 2'},
+                    {teste:2, testeUm: 'Testeando 2'},
+                    {teste:2, testeUm: 'Testeando 2'},
+                    {teste:2, testeUm: 'Testeando 2'},
+                    {teste:2, testeUm: 'Testeando 2'},
+                    {teste:2, testeUm: 'Testeando 2'},
+                    {teste:2, testeUm: 'Testeando 2'},
+                    {teste:2, testeUm: 'Testeando 2'},
+                    {teste:2, testeUm: 'Testeando 2'},
+                    {teste:2, testeUm: 'Testeando 2'},
+                    {teste:2, testeUm: 'Testeando 2'},
+                    {teste:2, testeUm: 'Testeando 2'},
+                    {teste:2, testeUm: 'Testeando 2'},
+                    ]);
+                this.columns= [{prop:'teste',title:'Teste 1'},{prop:'testeUm', title:'Teste 2'}];
+
+                this.gridConfig ={ data: this.data, columns: this.columns }                
             }
             window.testeVM = new vm();
             ko.applyBindings(testeVM,$('body')[0]);
         })();
     </script>
+
 </html>

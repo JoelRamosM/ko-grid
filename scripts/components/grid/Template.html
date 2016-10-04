@@ -3,13 +3,16 @@
         <div class="dataTables_wrapper form-inline dt-bootstrap ko-grid_dataTables_wrapper">
             <div class="row">
                 <div class="col-sm-12">
-                    <table role="grid" class="table table-bordered table-hover dataTable ko-grid_table">
+                    <!--ko if: dataSource().dataSet().length == 0 -->
+                    <div data-bind="html: emptyTemplate"></div>
+                    <!--/ko-->
+                    <table role="grid" class="table table-bordered table-hover dataTable ko-grid_table" data-bind="if: dataSource().dataSet().length > 0">
                         <thead class="ko-grid_thead">
                             <tr class="ko-grid_head-row">
                                 <!--ko if: isMultiSelect-->
                                 <td class="col-sm-1 text-center ko-grid_th-check-all"><input type="checkbox" data-bind="checked: checkAll" /></td>
                                 <!--/ko-->
-                                <!--ko foreach: collumns-->
+                                <!--ko foreach: columns-->
                                 <th class="ko-grid_th" data-bind="text:title"></th>
                                 <!--/ko-->
                             </tr>
@@ -17,19 +20,32 @@
                         <tbody class="ko-grid_tbody" data-bind="foreach: dataSource().dataSet">
                             <tr role="row" class="odd ko-grid_row" data-bind="doubleClick: $parent.rowDoubleClickAction.bind($parent)" title="De dois cliques na linha para editar item.">
                                 <!--ko if: $parent.isMultiSelect-->
-                                <td class="col-sm-1 text-center ko-grid_check-collumn"><input type="checkbox" data-bind="value:$data['id'] || $data['Id'] || $data[$parent.identityProp()], checked:$parent.selectedRows" /></td>
+                                <td class="col-sm-1 text-center ko-grid_check-collumn"><input type="checkbox" data-bind="value:$data['id'] || $data['Id'] || $data[$parent.identityProp()], checked:$parent.selectedRows"
+                                    /></td>
                                 <!--/ko-->
-                                <!--ko foreach: $parent.collumns-->
+                                <!--ko foreach: $parent.columns-->
                                 <td class="ko-grid_collumn" data-bind="text: $parents[1]._getDataValue($parent,$data.prop), formatter: $data.format"></td>
                                 <!--/ko-->
                             </tr>
                         </tbody>
+                        <tfoot data-bind="if: hasAggregates">
+                             <tr role="row" class="odd ko-grid_row" title="De dois cliques na linha para editar item.">
+                                <!--ko if: isMultiSelect-->
+                                <td class="col-sm-1 text-center"></td>
+                                <!--/ko-->
+                                <!--ko foreach: columns-->
+                                 <td class="ko-grid_collumn" data-bind="text: $parent._getAggregate($data), formatter: $data.format"></td>
+                                <!--/ko-->
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-sm-5 ko-grid_description"><span data-bind="text: dataSourceDescription"></span></div>
-                <div class="col-sm-7"><page-control class="right ko-grid_page-control" params="{totalPages: totalPages, currentPage: currentPage, onGoTo: goToPage.bind($data), onNext: next.bind($data), onPrev:prev.bind($data)}"></page-control></div>
+            <div class="row" data-bind="if: dataSource().dataSet().length > 0">
+                <div class="text-left col-md-7">
+                    <page-control class="ko-grid_page-control" params="{totalPages: totalPages, currentPage: currentPage, onGoTo: goToPage.bind($data), onNext: next.bind($data), onPrev:prev.bind($data)}"></page-control>
+                </div>
+                <div class="col-md-5 text-right ko-grid_description"><span data-bind="text: dataSourceDescription"></span></div>
             </div>
         </div>
     </div>

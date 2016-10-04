@@ -6,8 +6,10 @@ function gridDataSourceFac(data) {
     return data.url ? new GridRemoteDataSource(data) : new GridLocalDataSource(data);
 }
 
+var emptyTemplate = "<div class='bs-callout bs-callout-info'><h4>Sem Dados</h4></div>";
+
 function GridViewModel(params) {
-    params = params || {};
+    params = params.config || {};
     var self = this;
     this.name = ko.observable(params.name);
     this.identityProp = ko.observable(params.identityProp)
@@ -18,10 +20,13 @@ function GridViewModel(params) {
     }
     this.isMultiSelect = ko.observable(params.isMultiSelect);
 
+    this.hasAggregates = ko.observable(params.hasAggregates);
+
     this.rowDoubleClickAction = params.rowDoubleClickAction || params.defaultAction || function () { };
 
-    this.collumns = ko.observableArray(params.collumns);
+    this.columns = ko.observableArray(params.columns);
 
+    this.emptyTemplate = ko.observable(params.emptyTemplate || emptyTemplate);
 
     this.dataSource = ko.observable(gridDataSourceFac({ url: params.url, dataSet: params.data, defaultAction: params.defaulAction, onRefresh: this.onRefreshCallback.bind(this) }));
 
@@ -70,15 +75,12 @@ GridViewModel.prototype._getDataValue = function (data, prop) {
         return this._getDataValue(value, splited.slice(1).join('.'))
     return value;
 };
-<<<<<<< Updated upstream
-=======
 
 GridViewModel.prototype._getAggregate = function (data) {
     if (data.aggregate)
         return this.dataSource().getAggregate({ column: data.prop, aggregate: data.aggregate });
 };
 
->>>>>>> Stashed changes
 GridViewModel.prototype.defaultAction = function (rowObject) {
     this.defaulActionCallback && this.defaulActionCallback(rowObject[this.identityProp()] || rowObject["id"] || rowObject["Id"]);
 }

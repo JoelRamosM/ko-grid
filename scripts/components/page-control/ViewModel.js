@@ -69,11 +69,21 @@ PageControlViewModel.prototype.next = function (page) {
     if (!this.nextPageEnable()) return;
     this.onNext.notifySubscribers(page);
 };
+
+PageControlViewModel.prototype.last = function () {
+    if (!this.nextPageEnable()) return;
+    this.goTo(this.pages().length);
+};
+
 PageControlViewModel.prototype.prev = function (page) {
     if (!this.prevPageEnable()) return;
     this.onPrev.notifySubscribers(page);
 };
 
+PageControlViewModel.prototype.first = function () {
+    if (!this.prevPageEnable()) return;
+    this.goTo(1);
+};
 
 PageControlViewModel.prototype.goTo = function (page) {
     this.onGoTo.notifySubscribers(page);
