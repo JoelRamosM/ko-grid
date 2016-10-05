@@ -3,12 +3,20 @@ var GridRequest = require("./gridRequest");
 var ajaxRequest = require("./ajax-request");
 function GridRemoteDataSource(data) {
     data = data || {};
-    GridDataSourceBase.bind(this,data).call();
-    var self = this;    
+    GridDataSourceBase.bind(this, data).call();
+    var self = this;
     this.url = ko.isObservable(data.url) ? data.url : ko.observable(data.url || "");
     this.urlNotInformed = ko.computed(function () {
         return !this.url();
-    }, this);   
+    }, this);
+};
+
+GridRemoteDataSource.prototype.getAggregate = function (options) {
+    if (options.aggregate != "sum") return 0;
+    var agregates = this.gridRequest().aggregates().filter(function (item) {
+        return item.column == options.column;
+    });
+    return (agregates.length && aggregate[0].value) || 0;
 };
 
 GridRemoteDataSource.prototype.refresh = function (filter) {

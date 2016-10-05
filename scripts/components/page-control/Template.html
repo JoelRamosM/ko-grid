@@ -6,7 +6,7 @@
         <!--ko foreach: pages-->
         <li data-bind="css:{'active': $data.current}" style="cursor:pointer;"><a data-bind="text:$data.value, click: $parent.goTo.bind($parent,$data.value)"> <span class="sr-only"></span></a></li>
         <!--/ko-->
-        <!--<li data-bind="css:{'disabled':!nextPageEnable()},visible: ellipisisNext"><span>...</span></li>-->
+        <li data-bind="css:{'disabled':!nextPageEnable()},visible: ellipisisNext"><span>...</span></li>
         <li data-bind="css:{'disabled':!nextPageEnable()}" style="cursor:pointer;"><a  data-bind="click:next"><span class="ko-grid__pagination_next-icon">>></span></a></li>
         <li data-bind="css:{'disabled':!nextPageEnable()}" style="cursor:pointer;"><a  data-bind="click:last"><span class="ko-grid__pagination_last-icon" >>|</span></a></li>
     </ul>

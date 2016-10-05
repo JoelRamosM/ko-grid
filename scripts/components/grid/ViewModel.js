@@ -41,9 +41,9 @@ function GridViewModel(params) {
     }, this);
 
     this.dataSourceDescription = ko.computed(function () {
-        var firstIndexInPage = (this.dataSource().gridRequest().currentPage() - 1) * this.dataSource().gridRequest().pageLength()+1;
-        var lastIndexInPage = (firstIndexInPage + this.dataSource().gridRequest().data().length-1);
-        return "Mostrando de " + firstIndexInPage + " para " + lastIndexInPage + ". Total: " + this.dataSource().gridRequest().totalData() + " itens";        
+        var firstIndexInPage = (this.dataSource().gridRequest().currentPage() - 1) * this.dataSource().gridRequest().pageLength() + 1;
+        var lastIndexInPage = (firstIndexInPage + this.dataSource().gridRequest().data().length - 1);
+        return "Mostrando de " + firstIndexInPage + " para " + lastIndexInPage + ". Total: " + this.dataSource().gridRequest().totalData() + " itens";
     }, this);
 
     this.checkAll = ko.computed({
