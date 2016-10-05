@@ -4,16 +4,16 @@
     <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
 </head>
 
-<body  class="container">    
+<body class="container">
     <div class="row">
-        <div class="col-xl-5">
+        <div class="col-xl-12">
             <grid params="config: gridConfig"></grid>
         </div>
     </div>
 </body>
 <script type="text/javascript" src="./node_modules/jquery/dist/jquery.min.js"></script>
 <script type="text/javascript" src="./node_modules/knockout/build/output/knockout-latest.js"></script>
-<script type="text/javascript" src="./dist/ko-grid.js"></script>
+<script type="text/javascript" src="./dist/ko-grid.min.js"></script>
 <script type="text/javascript">
         (function(){
             var vm = function(){
@@ -50,8 +50,13 @@
                     ]);
                 this.columns= [{prop:'teste',title:'Teste 1', aggregate:"sum"},{prop:'testeUm', title:'Teste 2'}];
 
-                this.gridConfig ={ data: this.data, columns: this.columns, hasAggregates:true }                
-            }
+                this.gridConfig ={ 
+                    data: this.data,
+                    columns: this.columns,
+                    hasAggregates:true,
+                    emptyTemplate:'<div class="alert alert-info" role="alert"><h1>Sem Dados.</h1></div>'
+                };                
+            };
             window.testeVM = new vm();
             ko.applyBindings(testeVM,$('body')[0]);
         })();

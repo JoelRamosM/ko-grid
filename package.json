@@ -1,6 +1,6 @@
 {
   "name": "ko-grid",
-  "version": "1.7.0",
+  "version": "1.7.15",
   "description": "A simple grid with KnockoutJS and Bootstrap",
   "main": "index.js",
   "scripts": {
