@@ -26,7 +26,7 @@ GridLocalDataSource.prototype.refresh = function (filter) {
 GridLocalDataSource.prototype.getAggregate = function (options) {
     if (options.aggregate != "sum") return 0;
     return this.gridRequest().data().map(function (data) {
-        return Number.parseFloat(data[options.column]) || 0;
+        return Number.parseFloat(ko.isObservable(data[options.column]) ? data[options.column]() : data[options.column]) || 0;
     }).reduce(function (prev, next) { return next + prev; });
 };
 module.exports = GridLocalDataSource;

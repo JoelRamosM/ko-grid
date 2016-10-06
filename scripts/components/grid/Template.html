@@ -1,7 +1,7 @@
 <!--ko if: dataSource().dataSet().length == 0 -->
 <div data-bind="html: emptyTemplate"></div>
 <!--/ko-->
-<div class="panel  panel-default">
+<div class="panel  panel-default" data-bind="visible: dataSource().dataSet().length > 0 ">
     <table role="grid" class="table  table-hover table-bordered ko-grid_table" data-bind="if: dataSource().dataSet().length > 0">
         <thead class="ko-grid_thead">
             <tr class="ko-grid_head-row">

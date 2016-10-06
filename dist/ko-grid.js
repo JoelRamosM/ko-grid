@@ -1,12 +1,16 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+require("./extensions/doubleClickBindHandler.js");
+require("./extensions/formatterBindHandler.js");
+require("./components/register-all.js");
+},{"./components/register-all.js":11,"./extensions/doubleClickBindHandler.js":12,"./extensions/formatterBindHandler.js":13}],2:[function(require,module,exports){
 ko.components.register("crud-bar", {
     viewModel: require("./ViewModel.js"),
     template: require("./Template.html")
 });
-},{"./Template.html":2,"./ViewModel.js":3}],2:[function(require,module,exports){
-module.exports = "﻿<div classs=\"btn-group\">\r\n    <!--ko if: newActionVisible-->\r\n    <button class=\"btn btn-primary\" data-bind=\"click: $data.new, enable: newActionEnabled\">\r\n        <span class=\"fa fa-plus\" aria-hidden=\"true\"></span> Novo\r\n    </button>\r\n    <!--/ko-->\r\n    <!--ko if: editActionVisible-->\r\n    <button class=\"btn btn-primary\" data-bind=\"click: $data.edit, enable: editActionEnable\">\r\n        <span class=\"fa fa-edit\" aria-hidden=\"true\"></span> Editar\r\n    </button>\r\n    <!--/ko-->\r\n    <!--ko if: deleteActionVisible-->\r\n    <button class=\"btn btn-danger\" type=\"button\" data-bind=\"click: $data.delete, enable: deleteActionEnable\">\r\n        <span class=\"fa fa-remove\" aria-hidden=\"true\"></span> Excluir\r\n        <span class=\"badge\" data-bind=\"visible:selectedCountBadge, text: selectedCountBadge\"></span>\r\n    </button>\r\n    <!--/ko-->\r\n    <!--ko if: customActions().length-->\r\n    <!--ko foreach: customActions-->\r\n    <button class=\"btn\" type=\"button\" data-bind=\"click: $data.action, css:$data.btnClass\">\r\n        <span data-bind=\"css:$data.iconClass\" aria-hidden=\"true\"></span>\r\n        <span data-bind=\"text: text\"></span>\r\n    </button>\r\n    <!--/ko-->\r\n    <!--/ko-->\r\n</div>";
+},{"./Template.html":3,"./ViewModel.js":4}],3:[function(require,module,exports){
+module.exports = "﻿<div classs=\"btn-group\">\n    <!--ko if: newActionVisible-->\n    <button class=\"btn btn-primary\" data-bind=\"click: $data.new, enable: newActionEnabled\">\n        <span class=\"fa fa-plus\" aria-hidden=\"true\"></span> Novo\n    </button>\n    <!--/ko-->\n    <!--ko if: editActionVisible-->\n    <button class=\"btn btn-primary\" data-bind=\"click: $data.edit, enable: editActionEnable\">\n        <span class=\"fa fa-edit\" aria-hidden=\"true\"></span> Editar\n    </button>\n    <!--/ko-->\n    <!--ko if: deleteActionVisible-->\n    <button class=\"btn btn-danger\" type=\"button\" data-bind=\"click: $data.delete, enable: deleteActionEnable\">\n        <span class=\"fa fa-remove\" aria-hidden=\"true\"></span> Excluir\n        <span class=\"badge\" data-bind=\"visible:selectedCountBadge, text: selectedCountBadge\"></span>\n    </button>\n    <!--/ko-->\n    <!--ko if: customActions().length-->\n    <!--ko foreach: customActions-->\n    <button class=\"btn\" type=\"button\" data-bind=\"click: $data.action, css:$data.btnClass\">\n        <span data-bind=\"css:$data.iconClass\" aria-hidden=\"true\"></span>\n        <span data-bind=\"text: text\"></span>\n    </button>\n    <!--/ko-->\n    <!--/ko-->\n</div>";
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 var apiBuilder = require("../../models/api/ApiCrudBarBuilder");
 function CrudBarViewModel(params) {
     this.onNew = new ko.subscribable();
@@ -78,15 +82,15 @@ CrudBarViewModel.prototype.enableEdit = function () {
 };
 
 module.exports = CrudBarViewModel;
-},{"../../models/api/ApiCrudBarBuilder":14}],4:[function(require,module,exports){
+},{"../../models/api/ApiCrudBarBuilder":15}],5:[function(require,module,exports){
 ko.components.register("grid", {
     viewModel: require("./ViewModel.js"),
     template: require("./Template.html")
 });
-},{"./Template.html":5,"./ViewModel.js":6}],5:[function(require,module,exports){
-module.exports = "<!--ko if: dataSource().dataSet().length == 0 -->\r\n<div data-bind=\"html: emptyTemplate\"></div>\r\n<!--/ko-->\r\n<div class=\"panel  panel-default\">\r\n    <table role=\"grid\" class=\"table  table-hover table-bordered ko-grid_table\" data-bind=\"if: dataSource().dataSet().length > 0\">\r\n        <thead class=\"ko-grid_thead\">\r\n            <tr class=\"ko-grid_head-row\">\r\n                <!--ko if: isMultiSelect-->\r\n                <td class=\"col-sm-1 text-center ko-grid_th-check-all\"><input type=\"checkbox\" data-bind=\"checked: checkAll\" /></td>\r\n                <!--/ko-->\r\n                <!--ko foreach: columns-->\r\n                <th class=\"ko-grid_th\" data-bind=\"text:title\"></th>\r\n                <!--/ko-->\r\n            </tr>\r\n        </thead>\r\n        <tbody class=\"ko-grid_tbody\" data-bind=\"foreach: dataSource().dataSet\">\r\n            <tr role=\"row\" class=\"odd ko-grid_row\" data-bind=\"doubleClick: $parent.rowDoubleClickAction.bind($parent)\" title=\"De dois cliques na linha para editar item.\">\r\n                <!--ko if: $parent.isMultiSelect-->\r\n                <td class=\"col-sm-1 text-center ko-grid_check-collumn\"><input type=\"checkbox\" data-bind=\"value:$data['id'] || $data['Id'] || $data[$parent.identityProp()], checked:$parent.selectedRows\"\r\n                    /></td>\r\n                <!--/ko-->\r\n                <!--ko foreach: $parent.columns-->\r\n                <td class=\"ko-grid_collumn\" data-bind=\"text: $parents[1]._getDataValue($parent,$data.prop), formatter: $data.format\"></td>\r\n                <!--/ko-->\r\n            </tr>\r\n        </tbody>\r\n        <tfoot>\r\n            <tr data-bind=\"if: hasAggregates\" class=\"active ko-grid_row-footer_aggregate\">\r\n                <!--ko if: isMultiSelect-->\r\n                <td class=\"col-sm-1 text-center\"></td>\r\n                <!--/ko-->\r\n                <!--ko foreach: columns-->\r\n                <td class=\"ko-grid_collumn\" data-bind=\"text: $parent._getAggregate($data), formatter: $data.format\"></td>\r\n                <!--/ko-->\r\n            </tr>\r\n        </tfoot>\r\n    </table>\r\n    <div class=\"row ko-grid_row-footer\" data-bind=\"if: dataSource().dataSet().length > 0\" style=\"bottom: 0;position: relative;width: 100%;margin-top: 7px;margin-bottom: 5px;\">\r\n        <div class=\"col-md-7\" style=\"border:none;position: relative;left: 0;\">\r\n            <page-control class=\"ko-grid_page-control\" params=\"{totalPages: totalPages, currentPage: currentPage, onGoTo: goToPage.bind($data), onNext: next.bind($data), onPrev:prev.bind($data)}\"></page-control>\r\n        </div>\r\n        <div class=\"col-md-5 text-right ko-grid_description\" style=\"border:none;position: relative;right: 0; top:7px\">\r\n            <span data-bind=\"text: dataSourceDescription\"></span>\r\n        </div>\r\n    </div>\r\n</div>";
+},{"./Template.html":6,"./ViewModel.js":7}],6:[function(require,module,exports){
+module.exports = "<!--ko if: dataSource().dataSet().length == 0 -->\n<div data-bind=\"html: emptyTemplate\"></div>\n<!--/ko-->\n<div class=\"panel  panel-default\" data-bind=\"visible: dataSource().dataSet().length > 0 \">\n    <table role=\"grid\" class=\"table  table-hover table-bordered ko-grid_table\" data-bind=\"if: dataSource().dataSet().length > 0\">\n        <thead class=\"ko-grid_thead\">\n            <tr class=\"ko-grid_head-row\">\n                <!--ko if: isMultiSelect-->\n                <td class=\"col-sm-1 text-center ko-grid_th-check-all\"><input type=\"checkbox\" data-bind=\"checked: checkAll\" /></td>\n                <!--/ko-->\n                <!--ko foreach: columns-->\n                <th class=\"ko-grid_th\" data-bind=\"text:title\"></th>\n                <!--/ko-->\n            </tr>\n        </thead>\n        <tbody class=\"ko-grid_tbody\" data-bind=\"foreach: dataSource().dataSet\">\n            <tr role=\"row\" class=\"odd ko-grid_row\" data-bind=\"doubleClick: $parent.rowDoubleClickAction.bind($parent)\" title=\"De dois cliques na linha para editar item.\">\n                <!--ko if: $parent.isMultiSelect-->\n                <td class=\"col-sm-1 text-center ko-grid_check-collumn\"><input type=\"checkbox\" data-bind=\"value:$data['id'] || $data['Id'] || $data[$parent.identityProp()], checked:$parent.selectedRows\"\n                    /></td>\n                <!--/ko-->\n                <!--ko foreach: $parent.columns-->\n                <td class=\"ko-grid_collumn\" data-bind=\"text: $parents[1]._getDataValue($parent,$data.prop), formatter: $data.format\"></td>\n                <!--/ko-->\n            </tr>\n        </tbody>\n        <tfoot>\n            <tr data-bind=\"if: hasAggregates\" class=\"active ko-grid_row-footer_aggregate\">\n                <!--ko if: isMultiSelect-->\n                <td class=\"col-sm-1 text-center\"></td>\n                <!--/ko-->\n                <!--ko foreach: columns-->\n                <td class=\"ko-grid_collumn\" data-bind=\"text: $parent._getAggregate($data), formatter: $data.format\"></td>\n                <!--/ko-->\n            </tr>\n        </tfoot>\n    </table>\n    <div class=\"row ko-grid_row-footer\" data-bind=\"if: dataSource().dataSet().length > 0\" style=\"bottom: 0;position: relative;width: 100%;margin-top: 7px;margin-bottom: 5px;\">\n        <div class=\"col-md-7\" style=\"border:none;position: relative;left: 0;\">\n            <page-control class=\"ko-grid_page-control\" params=\"{totalPages: totalPages, currentPage: currentPage, onGoTo: goToPage.bind($data), onNext: next.bind($data), onPrev:prev.bind($data)}\"></page-control>\n        </div>\n        <div class=\"col-md-5 text-right ko-grid_description\" style=\"border:none;position: relative;right: 0; top:7px\">\n            <span data-bind=\"text: dataSourceDescription\"></span>\n        </div>\n    </div>\n</div>";
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 var GridRemoteDataSource = require("../../models/gridRemoteDataSource");
 var GridLocalDataSource = require("../../models/gridLocalDataSource");
 var apiBuilder = require("../../models/api/ApiGridBuilder");
@@ -194,15 +198,15 @@ GridViewModel.prototype.prev = function () {
 };
 
 module.exports = GridViewModel;
-},{"../../models/api/ApiGridBuilder":15,"../../models/gridLocalDataSource":17,"../../models/gridRemoteDataSource":18}],7:[function(require,module,exports){
+},{"../../models/api/ApiGridBuilder":16,"../../models/gridLocalDataSource":18,"../../models/gridRemoteDataSource":19}],8:[function(require,module,exports){
 ko.components.register("page-control", {
     viewModel: require("./ViewModel.js"),
     template: require("./Template.html")
 });
-},{"./Template.html":8,"./ViewModel.js":9}],8:[function(require,module,exports){
-module.exports = "<nav data-bind=\"visible: totalPages()>1\">\r\n    <ul class=\"pagination pagination-sm\" style=\"margin:0;\">\r\n        <li data-bind=\"css:{'disabled':!prevPageEnable()}\" style=\"cursor:pointer;\">\r\n            <a class=\"glyphicon glyphicon-step-backward ko-grid__pagination_first-icon\" data-bind=\"click:first\"></a>\r\n        </li>\r\n        <li data-bind=\"css:{'disabled':!prevPageEnable()}\" style=\"cursor:pointer;\">\r\n            <a aria-label=\"Previous\" class=\"glyphicon glyphicon-backward ko-grid__pagination_prev-icon\" data-bind=\"click:prev\"></a>\r\n        </li>\r\n        <!--<li data-bind=\"css:{'disabled':!prevPageEnable()},visible: ellipisisPrev\"><span>...</span></li>-->\r\n        <!--ko foreach: pages-->\r\n        <li data-bind=\"css:{'active': $data.current}\" style=\"cursor:pointer;\">\r\n            <a style=\"top:1px;\" data-bind=\"text:$data.value, click: $parent.goTo.bind($parent,$data.value)\"></a>\r\n        </li>\r\n        <!--/ko-->\r\n        <li data-bind=\"css:{'disabled':!nextPageEnable()},visible: ellipisisNext\"><span style=\"top:1px;\">...</span></li>\r\n        <li data-bind=\"css:{'disabled':!nextPageEnable()}\" style=\"cursor:pointer;\">\r\n            <a class=\"glyphicon glyphicon-forward ko-grid__pagination_next-icon\" data-bind=\"click:next\"></a>\r\n        </li>\r\n        <li data-bind=\"css:{'disabled':!nextPageEnable()}\" style=\"cursor:pointer;\">\r\n            <a class=\"glyphicon glyphicon-step-forward ko-grid__pagination_last-icon\" data-bind=\"click:last\"></a>\r\n        </li>\r\n    </ul>\r\n</nav>";
+},{"./Template.html":9,"./ViewModel.js":10}],9:[function(require,module,exports){
+module.exports = "<nav data-bind=\"visible: totalPages()>1\">\n    <ul class=\"pagination pagination-sm\" style=\"margin:0;\">\n        <li data-bind=\"css:{'disabled':!prevPageEnable()}\" style=\"cursor:pointer;\">\n            <a class=\"glyphicon glyphicon-step-backward ko-grid__pagination_first-icon\" data-bind=\"click:first\"></a>\n        </li>\n        <li data-bind=\"css:{'disabled':!prevPageEnable()}\" style=\"cursor:pointer;\">\n            <a aria-label=\"Previous\" class=\"glyphicon glyphicon-backward ko-grid__pagination_prev-icon\" data-bind=\"click:prev\"></a>\n        </li>\n        <!--<li data-bind=\"css:{'disabled':!prevPageEnable()},visible: ellipisisPrev\"><span>...</span></li>-->\n        <!--ko foreach: pages-->\n        <li data-bind=\"css:{'active': $data.current}\" style=\"cursor:pointer;\">\n            <a style=\"top:1px;\" data-bind=\"text:$data.value, click: $parent.goTo.bind($parent,$data.value)\"></a>\n        </li>\n        <!--/ko-->\n        <li data-bind=\"css:{'disabled':!nextPageEnable()},visible: ellipisisNext\"><span style=\"top:1px;\">...</span></li>\n        <li data-bind=\"css:{'disabled':!nextPageEnable()}\" style=\"cursor:pointer;\">\n            <a class=\"glyphicon glyphicon-forward ko-grid__pagination_next-icon\" data-bind=\"click:next\"></a>\n        </li>\n        <li data-bind=\"css:{'disabled':!nextPageEnable()}\" style=\"cursor:pointer;\">\n            <a class=\"glyphicon glyphicon-step-forward ko-grid__pagination_last-icon\" data-bind=\"click:last\"></a>\n        </li>\n    </ul>\n</nav>";
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 function PageControlViewModel(params) {
     this.totalPages = ko.isObservable(params.totalPages) ? params.totalPages : ko.observable(params.totalPages);
     this.currentPage = ko.isObservable(params.currentPage) ? params.currentPage : ko.observable(params.currentPage);
@@ -295,12 +299,12 @@ PageControlViewModel.prototype.goTo = function (page) {
 };
 
 module.exports = PageControlViewModel;
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 require("./page-control/Register");
 require("./grid/Register");
 require("./crud-bar/Register");
 //ko.applyBindings({});
-},{"./crud-bar/Register":1,"./grid/Register":4,"./page-control/Register":7}],11:[function(require,module,exports){
+},{"./crud-bar/Register":2,"./grid/Register":5,"./page-control/Register":8}],12:[function(require,module,exports){
 ko.bindingHandlers["doubleClick"] = {
     init: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
         var handler = valueAccessor.bind(bindingContext)();
@@ -309,7 +313,7 @@ ko.bindingHandlers["doubleClick"] = {
         });
     }
 };
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 ko.bindingHandlers["formatter"] = {
     init: function () {
 
@@ -348,7 +352,7 @@ ko.bindingHandlers["formatter"] = {
     }
 
 };
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 function request(method, url, params, done, fail, aways) {
     var xhr = $.ajax({ method: method, url: url, data: params })
                   .done(done)
@@ -366,7 +370,7 @@ module.exports = {
     }
 
 };
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 function ApiCrudBarBuilder(gridScope) {
     return {
         disableNewAction: gridScope.disableNew.bind(gridScope),
@@ -380,7 +384,7 @@ function ApiCrudBarBuilder(gridScope) {
 };
 
 module.exports = ApiCrudBarBuilder;
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 function ApiGridBuilder(gridScope) {
     return {
         applyFilter: gridScope.filter.bind(gridScope),
@@ -392,7 +396,7 @@ function ApiGridBuilder(gridScope) {
 };
 
 module.exports = ApiGridBuilder;
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 var GridRequest = require("./gridRequest");
 function GridDataSourceBase(data) {
     data = data || {};
@@ -430,7 +434,7 @@ function GridDataSourceBase(data) {
 module.exports = GridDataSourceBase;
 
 
-},{"./gridRequest":19}],17:[function(require,module,exports){
+},{"./gridRequest":20}],18:[function(require,module,exports){
 var GridDataSourceBase = require("./gridDataSource.base");
 function GridLocalDataSource(data) {
     data = data || {};
@@ -459,11 +463,11 @@ GridLocalDataSource.prototype.refresh = function (filter) {
 GridLocalDataSource.prototype.getAggregate = function (options) {
     if (options.aggregate != "sum") return 0;
     return this.gridRequest().data().map(function (data) {
-        return Number.parseFloat(data[options.column]) || 0;
+        return Number.parseFloat(ko.isObservable(data[options.column]) ? data[options.column]() : data[options.column]) || 0;
     }).reduce(function (prev, next) { return next + prev; });
 };
 module.exports = GridLocalDataSource;
-},{"./gridDataSource.base":16}],18:[function(require,module,exports){
+},{"./gridDataSource.base":17}],19:[function(require,module,exports){
 var GridDataSourceBase = require("./gridDataSource.base");
 var GridRequest = require("./gridRequest");
 var ajaxRequest = require("./ajax-request");
@@ -506,7 +510,7 @@ GridRemoteDataSource.prototype.refresh = function (filter) {
 module.exports = GridRemoteDataSource;
 
 
-},{"./ajax-request":13,"./gridDataSource.base":16,"./gridRequest":19}],19:[function(require,module,exports){
+},{"./ajax-request":14,"./gridDataSource.base":17,"./gridRequest":20}],20:[function(require,module,exports){
 function GridRequest(data) {
     data = data || {};
     this.pageLength = ko.observable(data.pageLength || data.PageLength || 10);
@@ -518,8 +522,4 @@ function GridRequest(data) {
     this.aggregates = ko.observableArray(data.aggregates || []);
 }
 module.exports = GridRequest;
-},{}],20:[function(require,module,exports){
-require("./extensions/doubleClickBindHandler.js");
-require("./extensions/formatterBindHandler.js");
-require("./components/register-all.js");
-},{"./components/register-all.js":10,"./extensions/doubleClickBindHandler.js":11,"./extensions/formatterBindHandler.js":12}]},{},[20]);
+},{}]},{},[1]);
