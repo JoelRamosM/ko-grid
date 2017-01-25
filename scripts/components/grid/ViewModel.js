@@ -49,7 +49,7 @@ function GridViewModel(params) {
             if (value) {
                 self.selectedRows.removeAll();
                 this.dataSource().dataSet().forEach(function (item) {
-                    self.selectedRows.push(item['id'] || item['Id']);
+                    self.selectedRows.push(item[this.identityProp()] || item['id'] || item['Id']);
                 });
             } else {
                 this.selectedRows.removeAll();
@@ -70,6 +70,15 @@ GridViewModel.prototype._getDataValue = function (data, prop) {
         return this._getDataValue(value, splited.slice(1).join('.'))
     return value;
 };
+<<<<<<< Updated upstream
+=======
+
+GridViewModel.prototype._getAggregate = function (data) {
+    if (data.aggregate)
+        return this.dataSource().getAggregate({ column: data.prop, aggregate: data.aggregate });
+};
+
+>>>>>>> Stashed changes
 GridViewModel.prototype.defaultAction = function (rowObject) {
     this.defaulActionCallback && this.defaulActionCallback(rowObject[this.identityProp()] || rowObject["id"] || rowObject["Id"]);
 }
