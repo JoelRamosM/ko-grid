@@ -50,12 +50,14 @@
                     ]);
                 this.columns= [{prop:'teste',title:'Teste 1', aggregate:"sum"},{prop:'testeUm', title:'Teste 2'}];
 
-                this.gridConfig ={ 
+                this.gridConfig ={
+                    identityProp:'teste',
+                    isMultiSelect:true,
                     data: this.data,
                     columns: this.columns,
                     hasAggregates:true,
                     emptyTemplate:'<div class="alert alert-info" role="alert"><h1>Sem Dados.</h1></div>'
-                };                
+                };
             };
             window.testeVM = new vm();
             ko.applyBindings(testeVM,$('body')[0]);
